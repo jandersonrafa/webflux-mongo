@@ -1,0 +1,36 @@
+server:
+  port: 8080
+
+log4j:
+  category:
+    org:
+      springframework:
+        data:
+          mongodb: DEBUG
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://admin123:admin123@ds253840.mlab.com:53840/article
+
+info:
+  app:
+    name: "SubmissÃµes de Artigos"
+    description: "Projeto para submissÃµes de artigos cientÃ­ficos em eventos"
+    version: "0.0.1.SNAPSHOT"
+
+management:
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: "health, env, metrics, sessions, mappings, info"
+
+#      uri: mongodb://ds253840.mlab.com:53840/article
+
+---
+
+spring:
+  profiles: production
+server:
+  port: 0
