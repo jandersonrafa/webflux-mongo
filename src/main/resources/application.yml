@@ -18,13 +18,13 @@ info:
     name: "SubmissÃµes de Artigos"
     description: "Projeto para submissÃµes de artigos cientÃ­ficos em eventos"
     version: "0.0.1.SNAPSHOT"
-
-management:
-  endpoints:
-    enabled-by-default: true
-    web:
-      exposure:
-        include: "health, env, metrics, sessions, mappings, info"
+#
+#management:
+#  endpoints:
+#    enabled-by-default: true
+#    web:
+#      exposure:
+#        include: "health, env, metrics, sessions, mappings, info"
 
 #      uri: mongodb://ds253840.mlab.com:53840/article
 
