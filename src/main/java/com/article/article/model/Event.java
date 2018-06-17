@@ -18,34 +18,29 @@ import lombok.NoArgsConstructor;
  *
  * @author Janderson
  */
-@Document(collection = "article")
+@Document(collection = "event")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Article {
+public class Event {
 
 	@Id
-	private String articleId;
+	private String eventId;
 
 	@NotBlank
-	private String title;
-
-	@NotBlank
-	private String resume;
+	private String eventName;
 
 	@NotNull
-	private LocalDate submissionDate;
+	private LocalDate eventDate;
 
-	@NotBlank
-	private String fileName;
+	@NotNull
+	private LocalDate registrationStartDate;
 
-//	@ManyToOne
-//	@JoinColumn(name = "user_id")
+	@NotNull
+	private LocalDate registrationEndDate;
+
 	@DBRef
 	private User user;
 
-//	@ManyToOne
-//	@JoinColumn(name = "event_id")
-//	private Event event;
 }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>debug</actionName>
+            <packagings>
+                <packaging>jar</packaging>
+            </packagings>
+            <goals>
+                <goal>process-classes</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
+            </goals>
+            <properties>
+                <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath com.article.article.ArticleApplication</exec.args>
+                <exec.executable>java</exec.executable>
+                <jpda.listen>true</jpda.listen>
+            </properties>
+        </action>
+        <action>
+            <actionName>CUSTOM-mvn compiler:compile compiler:testCompile</actionName>
+            <displayName>mvn compiler:compile compiler:testCompile</displayName>
+            <goals>
+                <goal>mvn</goal>
+                <goal>compiler:compile</goal>
+                <goal>compiler:testCompile</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>CUSTOM-compiler:compile compiler:testCompile</actionName>
+            <displayName>compiler:compile compiler:testCompile</displayName>
+            <goals>
+                <goal>compiler:compile</goal>
+                <goal>compiler:testCompile</goal>
+            </goals>
+        </action>
+    </actions>

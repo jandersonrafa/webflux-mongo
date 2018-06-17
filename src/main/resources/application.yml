@@ -9,6 +9,7 @@ log4j:
           mongodb: DEBUG
 
 spring:
+  thymeleaf.cache: false
   data:
     mongodb:
       uri: mongodb://admin123:admin123@ds253840.mlab.com:53840/article

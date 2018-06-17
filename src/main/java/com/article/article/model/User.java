@@ -1,8 +1,6 @@
 package com.article.article.model;
 
-import java.math.BigInteger;
-
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -18,18 +16,18 @@ import lombok.NoArgsConstructor;
 public class User {
 
 	@Id
-	private BigInteger id;
+	private String id;
 
-	@NotNull
+	@NotBlank
 	private String username;
 
-	@NotNull
+	@NotBlank
 	private String email;
 
-	@NotNull
+	@NotBlank
 	private String name;
 
-	@NotNull
+	@NotBlank
 	private String password;
 //
 //    @ManyToMany

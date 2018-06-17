@@ -1,7 +1,5 @@
 package com.article.article.dto.output;
 
-import java.math.BigInteger;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,14 +15,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDetailDto {
+public class EventListingDto {
 
-	private BigInteger id;
+	private String eventId;
 
-	private String username;
-
-	private String email;
-
-	private String name;
+	private String eventName;
 
 }
