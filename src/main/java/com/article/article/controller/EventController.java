@@ -51,21 +51,13 @@ public class EventController {
 	public ModelAndView pageRegister() {
 		return new ModelAndView("event/eventDetail", "event", new EventDetailDto());
 	}
-//
-//	@GetMapping("/{id}/delete")
-//	@ApiOperation(value = "Exclusão de evento")
-//	@ResponseBody
-//	public String delete(@PathVariable("id") Long eventId) {
-//		return "OK";
-//	}
-//
-//	@PostMapping
-//	@ApiOperation(value = "Inserção de dados de evento")
-//	@ResponseBody
-//	public String save(@RequestBody Object input) {
-//		return "OK";
-//	}
-//
+
+	@GetMapping("/{id}/delete")
+	@ApiOperation(value = "Exclusão de evento")
+	public String delete(@PathVariable("id") String eventId) {
+		eventService.delete(eventId);
+		return "redirect:/evento";
+	}
 
 	@PostMapping("{id}")
 	@ApiOperation(value = "Update de evento")

@@ -19,4 +19,6 @@ public interface EventService {
 	public Mono<EventDetailDto> update(String eventId, EventDetailDto dto);
 
 	public Mono<EventDetailDto> create(EventDetailDto dto);
+
+	public void delete(String eventId);
 }

@@ -11,6 +11,9 @@
 
         <div class="container">
 
+            <a th:if="${event.eventId}" >
+                <button type="submit" class="btn btn-primary">// TODO SUBMISSAO EVENTO</button>
+            </a>
             <form th:if="${event}" class="ui form" method="POST" th:object="${event}" th:action="${event.eventId} == null ? @{/evento} : @{__${event.eventId}__}" >
 
 
@@ -36,6 +39,9 @@
                     <input class="form-control" type="date" th:value="*{registrationEndDate}" th:field="*{registrationEndDate}" />
                 </div>
                 <button type="submit" class="btn btn-primary">Salvar</button>
+                <a th:href="@{/evento/__${event.eventId}__/delete}">
+                    <button type="button" class="btn btn-danger">Excluir</button>
+                </a>
             </form>
             <div th:if="${error}" class="alert alert-danger">
 

@@ -50,6 +50,17 @@ public class EventServiceImpl implements EventService {
 	}
 
 	@Override
+	public void delete(String eventId) {
+		final Optional<Event> optional = eventRepository.findById(eventId).blockOptional();
+		final String loggedUserId = userService.getLoggedUser().getId();
+		if (optional.isPresent() || !optional.get().getUser().getId().equals(loggedUserId)) {
+			eventRepository.delete(optional.get()).block();
+		} else {
+			throw new NotFoundException("Evento não encontrado");
+		}
+	}
+
+	@Override
 	public Mono<EventDetailDto> update(String eventId, EventDetailDto dto) {
 		validatorService.validate(dto);
 		final Optional<Event> optional = eventRepository.findById(eventId).blockOptional();
