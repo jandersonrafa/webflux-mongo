@@ -1,0 +1,38 @@
+package com.article.article.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import io.swagger.annotations.ApiOperation;
+
+/**
+ *
+ * @author Janderson
+ */
+@RequiredArgsConstructor
+@Controller
+@RequestMapping("/submission")
+public class SubmissionController {
+
+	private final SubmissionService submissionService;
+
+	@GetMapping
+	@ApiOperation(value = "Exibe eventos que usuario submeteu artigos")
+	public ModelAndView pageListSubmission() {
+		return new ModelAndView("submission/submissionList");
+	}
+
+	@ResponseBody
+	@GetMapping(value = "/todos", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	@ApiOperation(value = "Listagem de eventos que usuario submeteu artigos")
+	public Flux<SubmissionListingDto> pageEvent() {
+		return submissionService.findAll();
+	}
+  
+}
