@@ -10,11 +10,15 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.article.article.dto.UserDetailDto;
+import com.article.article.dto.output.UserListingDto;
 import com.article.article.exception.AbstractBusinessException;
 import com.article.article.service.user.UserService;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.ResponseBody;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
@@ -22,13 +26,26 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/usuario")
 public class UserController {
 
-	private final UserService userService;
+    private final UserService userService;
 
-	@GetMapping("/{userId}")
-	@ApiOperation(value = "Exibe dados do usuário")
-	public Mono<ModelAndView> exibeUsuario(@PathVariable("userId") String userId) {
-		return userService.findById(userId).map(user -> new ModelAndView("user/userDetail", "user", user));
-	}
+    @GetMapping
+    @ApiOperation(value = "Página de Usuários")
+    public ModelAndView pageUser() {
+        return new ModelAndView("user/userList");
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/todos", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @ApiOperation(value = "Listagem de Usuários")
+    public Flux<UserListingDto> listUser() {
+        return userService.findAll();
+    }
+
+    @GetMapping("/{userId}")
+    @ApiOperation(value = "Exibe dados do usuário")
+    public Mono<ModelAndView> exibeUsuario(@PathVariable("userId") String userId) {
+        return userService.findById(userId).map(user -> new ModelAndView("user/userDetail", "user", user));
+    }
 
 //
 //	@GetMapping("/cadastro")
@@ -52,20 +69,20 @@ public class UserController {
 //		return "OK";
 //	}
 //
-	@PostMapping("{id}")
+    @PostMapping("{id}")
 //	@ResponseBody
-	@ApiOperation(value = "Alteração de dados de usuario")
-	public String update(@PathVariable("id") String userId, UserDetailDto dto, RedirectAttributes redirectAttrs) throws UserException {
-		try {
-			// TODO redirecionar para evento quando sucesso
-			redirectAttrs.addFlashAttribute("user", userService.update(userId, dto).block());
-			return "redirect:/usuario/" + userId;
-		} catch (Exception e) {
-			redirectAttrs.addFlashAttribute("error", e instanceof AbstractBusinessException ? e.getMessage() : "Erro ao tentar salvar");
-			redirectAttrs.addFlashAttribute("user", dto);
-			return "redirect:/usuario/" + userId;
-		}
-	}
+    @ApiOperation(value = "Alteração de dados de usuario")
+    public String update(@PathVariable("id") String userId, UserDetailDto dto, RedirectAttributes redirectAttrs) throws UserException {
+        try {
+            // TODO redirecionar para evento quando sucesso
+            redirectAttrs.addFlashAttribute("user", userService.update(userId, dto).block());
+            return "redirect:/usuario/" + userId;
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("error", e instanceof AbstractBusinessException ? e.getMessage() : "Erro ao tentar salvar");
+            redirectAttrs.addFlashAttribute("user", dto);
+            return "redirect:/usuario/" + userId;
+        }
+    }
 
 //	@DeleteMapping("/exemplo/{userId}/delete")
 //	@ApiOperation(value = "Exclusão de usuário")

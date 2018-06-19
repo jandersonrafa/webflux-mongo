@@ -3,7 +3,9 @@ package com.article.article.service.user;
 import javax.validation.Valid;
 
 import com.article.article.dto.UserDetailDto;
+import com.article.article.dto.output.UserListingDto;
 import com.article.article.model.User;
+import reactor.core.publisher.Flux;
 
 import reactor.core.publisher.Mono;
 
@@ -18,5 +20,7 @@ public interface UserService {
 	public Mono<UserDetailDto> update(String userId, @Valid UserDetailDto dto);
 
 	public User getLoggedUser();
+        
+	public Flux<UserListingDto> findAll();
 
 }

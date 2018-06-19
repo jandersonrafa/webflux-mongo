@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+
+<html>
+    <body>
+        <div th:include="fragments/header"></div>
+
+        <main role="main" style="margin-bottom: 100px;">
+
+            <section class="jumbotron text-center">
+                <div class="container">
+                    <h1 class="jumbotron-heading">Listagem de Usuários</h1>
+                    <p class="lead text-muted">Veja abaixo todos os usuários cadastrados no sistema!</p>
+                </div>
+            </section>
+            <div class="table-responsive">
+                <table class="table" id="users-table">
+                    <thead>
+                        <tr>
+                            <th>Editar</th>
+                            <th>Id</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!--<div id="book-list">-->
+                        <!--</div>-->
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+
+        <div th:include="fragments/footer"></div>
+
+        <script>
+            var evtSource = new EventSource("http://localhost:8080/usuario/todos");
+            evtSource.onmessage = function (user) {
+
+            var data = JSON.parse(user.data);
+            var table = document.getElementById("users-table");
+            var row = table.insertRow(1);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            console.log(new String(data.id))
+            cell1.innerHTML = '<td><a href="http://localhost:8080/usuario/' + data.id + '">Editar</a></td>';
+            cell2.innerHTML = '<td>' + data.id + '</td>';
+            cell3.innerHTML = '<td>' + data.username + '</td>';
+
+            }
+            evtSource.onerror = function (user) {
+            evtSource.close();
+            }
+        </script>
+    </body>
+</html>
