@@ -35,8 +35,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Mono<UserDetailDto> findById(String userId) {
-		final String loggedUserId = this.getUserId();
-		if (this.getUserId().equals(userId)) {
+		final String loggedUserId = this.getLoggedUser().getId();
+		if (loggedUserId.equals(userId)) {
 			return userRepository.findById(loggedUserId).map(entity -> modelMapper.map(entity, UserDetailDto.class));
 		} else {
 			throw new UnauthorizedException("Usuário não permitido");
@@ -58,9 +58,10 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
-	private String getUserId() {
+	@Override
+	public User getLoggedUser() {
 		// TODO get id usuario logado
-		return "28200889534180877342847324285";
+		return User.builder().id("28200889534180877342847324285").build();
 	}
 
 }

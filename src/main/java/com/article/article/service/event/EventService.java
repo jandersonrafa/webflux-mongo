@@ -15,4 +15,8 @@ public interface EventService {
 	public Flux<EventListingDto> findAll();
 
 	public Mono<EventDetailDto> findById(String eventId);
+
+	public Mono<EventDetailDto> update(String eventId, EventDetailDto dto);
+
+	public Mono<EventDetailDto> create(EventDetailDto dto);
 }

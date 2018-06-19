@@ -11,13 +11,31 @@
 
         <div class="container">
 
-            <form th:if="${event}" class="ui form" method="POST" th:object="${event}" th:action="@{__${event.eventId}__}">
+            <form th:if="${event}" class="ui form" method="POST" th:object="${event}" th:action="${event.eventId} == null ? @{/evento} : @{__${event.eventId}__}" >
+
+
+
+                <!--<form th:if="${event}" class="ui form" method="POST" th:object="${event}" th:action="@{__${event.eventId}__}">-->
                 <!--<form th:if="${user}" class="ui form" method="POST" th:object="${user}" th:action="@{/usuario/${user.id}">-->
                 <div class="form-group">
                     <label>Nome</label>
                     <input th:field="*{eventName}"type="text" class="form-control" placeholder="Nome" required="required">
                 </div>
-                <button type="submit" class="btn btn-primary">Alterar</button>
+                <div class="form-group">
+                    <label>Data</label>
+                    <input class="form-control" type="date" th:value="*{eventDate}" th:field="*{eventDate}" />
+                </div>
+
+                <div class="form-group">
+                    <label>Data abertura inscrição</label>
+                    <input class="form-control" type="date" th:value="*{registrationStartDate}" th:field="*{registrationStartDate}" />
+                </div>
+
+                <div class="form-group">
+                    <label>Data encerramento inscrição</label>
+                    <input class="form-control" type="date" th:value="*{registrationEndDate}" th:field="*{registrationEndDate}" />
+                </div>
+                <button type="submit" class="btn btn-primary">Salvar</button>
             </form>
             <div th:if="${error}" class="alert alert-danger">
 
