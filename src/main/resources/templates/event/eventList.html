@@ -2,7 +2,7 @@
 
 <html>
     <body>
-        <div th:include="fragments/header"></div>
+        <div th:replace="fragments/header"></div>
 
         <main role="main">
 
@@ -12,6 +12,9 @@
                     <p class="lead text-muted">Veja abaixo todos o eventos cadastrados no sistema!</p>
                 </div>
             </section>
+            <a th:href="@{/evento/cadastro}">
+                <button type="submit" class="btn btn-primary">Cadastrar Novo</button>
+            </a>
             <div class="table-responsive">
                 <table class="table" id="events-table">
                     <thead>
@@ -30,26 +33,26 @@
 
         </main>
 
-        <div th:include="fragments/footer"></div>
+        <div th:replace="fragments/footer"></div>
 
         <script>
             var evtSource = new EventSource("http://localhost:8080/evento/todos");
             evtSource.onmessage = function (event) {
 
-            var data = JSON.parse(event.data);
-            var table = document.getElementById("events-table");
-            var row = table.insertRow(1);
-            var cell1 = row.insertCell(0);
-            var cell2 = row.insertCell(1);
-            var cell3 = row.insertCell(2);
-            console.log(new String(data.eventId))
-            cell1.innerHTML = '<td><a href="http://localhost:8080/evento/' + data.eventId + '">Editar</a></td>';
-            cell2.innerHTML = '<td>' + data.eventId + '</td>';
-            cell3.innerHTML = '<td>' + data.eventName + '</td>';
+                var data = JSON.parse(event.data);
+                var table = document.getElementById("events-table");
+                var row = table.insertRow(1);
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                var cell3 = row.insertCell(2);
+                console.log(new String(data.eventId))
+                cell1.innerHTML = '<td><a href="http://localhost:8080/evento/' + data.eventId + '">Editar</a></td>';
+                cell2.innerHTML = '<td>' + data.eventId + '</td>';
+                cell3.innerHTML = '<td>' + data.eventName + '</td>';
 
             }
             evtSource.onerror = function (event) {
-            evtSource.close();
+                evtSource.close();
             }
         </script>
     </body>
