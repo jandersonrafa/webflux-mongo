@@ -2,6 +2,7 @@ package com.article.article.service.event;
 
 import com.article.article.dto.EventDetailDto;
 import com.article.article.dto.output.EventListingDto;
+import com.article.article.model.Event;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -21,4 +22,7 @@ public interface EventService {
 	public Mono<EventDetailDto> create(EventDetailDto dto);
 
 	public void delete(String eventId);
+
+	public Event findModelById(String idEvento);
+
 }

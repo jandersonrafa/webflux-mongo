@@ -5,6 +5,8 @@ import org.springframework.stereotype.Repository;
 
 import com.article.article.model.Article;
 
+import reactor.core.publisher.Flux;
+
 /**
  *
  * @author Janderson
@@ -12,4 +14,5 @@ import com.article.article.model.Article;
 @Repository
 public interface ArticleRepository extends ReactiveMongoRepository<Article, String> {
 
+	Flux<Article> findByUser_id(String userId);
 }

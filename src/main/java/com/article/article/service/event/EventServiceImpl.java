@@ -85,4 +85,9 @@ public class EventServiceImpl implements EventService {
 		model.setUser(userService.getLoggedUser());
 		return eventRepository.save(model).map(entity -> modelMapper.map(entity, EventDetailDto.class));
 	}
+
+	@Override
+	public Event findModelById(String idEvento) {
+		return eventRepository.findById(idEvento).block();
+	}
 }

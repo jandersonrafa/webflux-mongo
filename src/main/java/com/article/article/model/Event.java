@@ -12,12 +12,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
  *
  * @author Janderson
  */
+@EqualsAndHashCode(of = "eventId")
 @Document(collection = "event")
 @Data
 @NoArgsConstructor

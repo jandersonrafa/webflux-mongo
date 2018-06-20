@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Article {
+public class Article implements Comparable<Article> {
 
 	@Id
 	private String articleId;
@@ -42,10 +42,19 @@ public class Article {
 
 //	@ManyToOne
 //	@JoinColumn(name = "user_id")
+	@NotNull
 	@DBRef
 	private User user;
+
+	@NotNull
+	@DBRef
+	private Event event;
 
 //	@ManyToOne
 //	@JoinColumn(name = "event_id")
 //	private Event event;
+	@Override
+	public int compareTo(Article o) {
+		return this.getSubmissionDate().compareTo(o.getSubmissionDate());
+	}
 }

@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+
+<html>
+    <body>
+        <div th:replace="fragments/header"></div>
+
+        <main role="main" style="margin-bottom: 100px;">
+
+            <section class="jumbotron text-center">
+                <div class="container">
+                    <h1 class="jumbotron-heading">Listagem de Eventos que usuario submeteu artigos</h1>
+                    <p class="lead text-muted">Veja abaixo todos o eventos que usuario submeteu artigo!</p>
+                </div>
+            </section>
+            <div class="container">
+                <!--                <a th:href="@{/evento/cadastro}">
+                                    <button type="submit" class="btn btn-primary">Cadastrar Novo</button>
+                                </a>-->
+                <div class="table-responsive">
+                    <table class="table" id="table">
+                        <thead>
+                            <tr>
+                                <th>Editar</th>
+                                <th>Id</th>
+                                <th>Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!--<div id="book-list">-->
+                            <!--</div>-->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+
+        <div th:replace="fragments/footer"></div>
+
+        <script>
+            var evtSource = new EventSource("http://localhost:8080/submissoes/todos");
+            evtSource.onmessage = function (event) {
+
+                var data = JSON.parse(event.data);
+                var table = document.getElementById("table");
+                var row = table.insertRow(1);
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                var cell3 = row.insertCell(2);
+                console.log(new String(data.eventId))
+                cell1.innerHTML = '<td><a href="http://localhost:8080/submissoes/' + data.articleId + '">Editar</a></td>';
+                cell2.innerHTML = '<td>' + data.eventId + '</td>';
+                cell3.innerHTML = '<td>' + data.eventName + '</td>';
+
+            }
+            evtSource.onerror = function (event) {
+                evtSource.close();
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+
+<html>
+    <body>
+
+        <div th:replace="fragments/header"></div>
+
+        <main role="main" style="margin-bottom: 100px;">
+
+            <section class="jumbotron text-center">
+                <div class="container">
+                    <h1 class="jumbotron-heading">Detalhamento de Submissão de artigo para Evento</h1>
+                    <p class="lead text-muted">Veja abaixo o artigo</p>
+                </div>
+            </section>
+            <div class="container">
+
+                <a th:if="${submission.articleId}" >
+                    <button type="submit" class="btn btn-primary">// TODO SUBMISSAO EVENTO</button>
+                </a>
+                <form th:if="${submission}" class="ui form" method="POST" th:object="${submission}" th:action="${submission.articleId} == null ? @{/submissoes/evento/__${submission.event.eventId}__} : @{__${submission.articleId}__}" >
+
+
+
+                    <!--<form th:if="${submission}" class="ui form" method="POST" th:object="${submission}" th:action="@{__${submission.articleId}__}">-->
+                    <!--<form th:if="${user}" class="ui form" method="POST" th:object="${user}" th:action="@{/usuario/${user.id}">-->
+                    <div class="form-group">
+                        <label>Nome</label>
+                        <input th:field="*{title}"type="text" class="form-control" placeholder="Titulo" required="required">
+                    </div>
+                    <div class="form-group">
+                        <label>Resumo</label>
+                        <input th:field="*{resume}"type="text" class="form-control" placeholder="Resumo" required="required">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Data Submissao</label>
+                        <input disabled class="form-control" type="date" th:value="*{submissionDate}" th:field="*{submissionDate}" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <a th:href="@{/submissoes/__${submission.articleId}__/delete}">
+                        <button type="button" class="btn btn-danger">Excluir</button>
+                    </a>
+                </form>
+                <div th:if="${error}" class="alert alert-danger">
+
+                    <a href="#" class="close" data-dismiss="alert"
+                       aria-label="close">×</a>
+                    <strong>Erro:</strong> <span th:text="${error}" />
+                </div>
+                <!-- Trigger the modal with a button -->
+            </div>
+        </main>
+
+        <div th:replace="fragments/footer"></div>
+
+    </body>
+</html>
