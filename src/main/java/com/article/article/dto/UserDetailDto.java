@@ -17,7 +17,7 @@ public class UserDetailDto {
 
     @JsonIgnore
     @ApiModelProperty(example = "1", notes = "Identificador")
-    private Long id;
+    private String id;
     @ApiModelProperty(example = "user1", notes = "Username")
     private String username;
     @ApiModelProperty(example = "user@dominio.com", notes = "E-mail de contato")
