@@ -1,42 +1,57 @@
 <!DOCTYPE HTML>
 
 <html>
-    <head>
-        <title>Spring Boot - POST-GET AJAX Example</title>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="stylesheet" href="/webjars/bootstrap/4.1.0/css/bootstrap.min.css" />
-    </head>
     <body>
 
-        <div class="container">
+        <div th:replace="fragments/header"></div>
 
-            <form th:if="${user}" class="ui form" method="POST" th:object="${user}" th:action="@{__${user.id}__}">
-                <!--<form th:if="${user}" class="ui form" method="POST" th:object="${user}" th:action="@{/usuario/${user.id}">-->
-                <div class="form-group">
-                    <label>Nome</label>
-                    <input th:field="*{name}"type="text" class="form-control" placeholder="Nome" required="required">
-                </div>
-                <div class="form-group">
-                    <label>Usuário</label>
-                    <input th:field="*{username}"type="text" class="form-control" placeholder="Usuário" required="required">
-                </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input th:field="*{email}"type="email" class="form-control" placeholder="Email" required="required">
-                </div>
-                <button type="submit" class="btn btn-primary">Cadastrar</button>
-            </form>
-            <div th:if="${error}" class="alert alert-danger">
+        <main role="main" style="margin-bottom: 100px;">
 
-                <a href="#" class="close" data-dismiss="alert"
-                   aria-label="close">×</a>
-                <strong>Erro:</strong> <span th:text="${error}" />
+            <section class="jumbotron text-center">
+                <div class="container">
+                    <h1 th:if="${user.id}" class="jumbotron-heading">Alteração de Usuário</h1>
+                    <h1 th:unless="${user.id}" class="jumbotron-heading">Cadastro de Usuário</h1>
+                    <p class="lead text-muted">Veja abaixo o usuário</p>
+                </div>
+            </section>
+            <div class="container">
+
+                <form th:if="${user}" class="ui form" method="POST" th:object="${user}" th:action="${user.id} == null ? @{/usuario} : @{__${user.id}__}" >
+                    <!--<form th:if="${user}" class="ui form" method="POST" th:object="${user}" th:action="@{/usuario/${user.id}">-->
+                    <div class="form-group">
+                        <label>Nome</label>
+                        <input th:field="*{name}" type="text" class="form-control" placeholder="Nome" required="required">
+                    </div>
+                    <div class="form-group">
+                        <label>Usuário</label>
+                        <input th:field="*{username}" type="text" class="form-control" placeholder="Usuário" required="required">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input th:field="*{email}" type="email" class="form-control" placeholder="Email" required="required">
+                    </div>
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <input th:field="*{password}" type="password" class="form-control" placeholder="Senha" required="required">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirmar Senha</label>
+                        <input th:field="*{passwordConfirm}" type="password" class="form-control" placeholder="Confirmar Senha" required="required">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Cadastrar</button>
+                </form>
+                <div th:if="${error}" class="alert alert-danger">
+
+                    <a href="#" class="close" data-dismiss="alert"
+                       aria-label="close">×</a>
+                    <strong>Erro:</strong> <span th:text="${error}" />
+                </div>
+                <!-- Trigger the modal with a button -->
             </div>
-            <!-- Trigger the modal with a button -->
-        </div>
+        </main>
 
-        <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
-        <script src="/webjars/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+        <div th:replace="fragments/footer"></div>
+
     </body>
 </html>
