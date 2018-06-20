@@ -1,5 +1,6 @@
 package com.article.article.controller;
 
+import com.article.article.dto.EventDetailDto;
 import org.omg.CORBA.UserException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,36 +42,19 @@ public class UserController {
         return userService.findAll();
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/cadastro/{userId}")
     @ApiOperation(value = "Exibe dados do usuário")
     public Mono<ModelAndView> exibeUsuario(@PathVariable("userId") String userId) {
         return userService.findById(userId).map(user -> new ModelAndView("user/userDetail", "user", user));
     }
 
-//
-//	@GetMapping("/cadastro")
-//	@ApiOperation(value = "Exibe formulario cadastro de usuário")
-//	public ModelAndView pageRegisterUser() {
-//		ModelAndView mv = new ModelAndView("user/show");
-//		mv.addObject("userRegister", "");
-//		return mv;
-//	}
-//
-//	@PostMapping
-//	@ApiOperation(value = "Inserção de dados de usuario")
-//	@ResponseBody
-//	public String save(@RequestBody UserInput userInput) throws UserException {
-//		userInput.setId(null);
-//		try {
-//			userService.save(userInput, false);
-//		} catch (UserException e) {
-//			return e.getMessage();
-//		}
-//		return "OK";
-//	}
-//
+    @GetMapping("/cadastro")
+    @ApiOperation(value = "Exibe cadastro de usuário")
+    public ModelAndView pageRegister() {
+        return new ModelAndView("user/userDetail", "user", new UserDetailDto());
+    }
+
     @PostMapping("{id}")
-//	@ResponseBody
     @ApiOperation(value = "Alteração de dados de usuario")
     public String update(@PathVariable("id") String userId, UserDetailDto dto, RedirectAttributes redirectAttrs) throws UserException {
         try {
@@ -81,6 +65,19 @@ public class UserController {
             redirectAttrs.addFlashAttribute("error", e instanceof AbstractBusinessException ? e.getMessage() : "Erro ao tentar salvar");
             redirectAttrs.addFlashAttribute("user", dto);
             return "redirect:/usuario/" + userId;
+        }
+    }
+
+    @PostMapping
+    @ApiOperation(value = "Alteração de dados de usuario")
+    public String save(UserDetailDto dto, RedirectAttributes redirectAttrs) throws UserException {
+        try {
+            redirectAttrs.addFlashAttribute("user", userService.save(dto, redirectAttrs).block());
+            return "redirect:/";
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("error", e instanceof AbstractBusinessException ? e.getMessage() : "Erro ao tentar salvar");
+            redirectAttrs.addFlashAttribute("user", dto);
+            return "redirect:/usuario/cadastro";
         }
     }
 

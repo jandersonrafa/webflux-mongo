@@ -12,9 +12,12 @@ import com.article.article.dto.UserDetailDto;
 import com.article.article.dto.output.UserListingDto;
 import com.article.article.exception.NotFoundException;
 import com.article.article.exception.UnauthorizedException;
+import com.article.article.exception.ValidateException;
 import com.article.article.model.User;
 import com.article.article.repository.UserRepository;
 import com.article.article.service.validator.ValidatorService;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import reactor.core.publisher.Flux;
 
 import reactor.core.publisher.Mono;
@@ -35,6 +38,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ValidatorService validatorService;
 
+//    @Autowired
+//    private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Override
     public Mono<UserDetailDto> findById(String userId) {
         final String loggedUserId = this.getLoggedUser().getId();
@@ -58,6 +63,30 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new NotFoundException("Usuário não encontrado");
         }
+    }
+
+    @Override
+    public Mono<UserDetailDto> save(@Valid UserDetailDto dto, RedirectAttributes redirectAttrs) {
+        validatorService.validate(dto);
+        User user = modelMapper.map(dto, User.class);
+
+        Optional<User> findByUsername = userRepository.findByUsername(dto.getUsername()).blockOptional();
+
+        if (findByUsername.isPresent()) {
+            throw new ValidateException("Um usuário com este nome de usuário já está cadastrado.");
+        }
+
+        if (dto.getPassword().length() == 0) {
+            throw new ValidateException("Uma senha deve ser informada.");
+        }
+
+        if (!dto.getPassword().equals(dto.getPasswordConfirm())) {
+            throw new ValidateException("Senha e confirmação de senha não são iguais.");
+        }
+
+//        TODO: colocar encode no password
+//        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        return userRepository.save(user).map(entity -> modelMapper.map(entity, UserDetailDto.class));
     }
 
     @Override
