@@ -15,4 +15,5 @@ import reactor.core.publisher.Flux;
 public interface ArticleRepository extends ReactiveMongoRepository<Article, String> {
 
 	Flux<Article> findByUser_id(String userId);
+
 }

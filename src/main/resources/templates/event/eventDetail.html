@@ -14,46 +14,81 @@
                 </div>
             </section>
             <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
 
-                <a th:href="@{/submissoes/evento/__${event.eventId}__}">
-                    <button type="button" class="btn btn-info">Submeter artigos</button>
-                </a>
-                <form th:if="${event}" class="ui form" method="POST" th:object="${event}" th:action="${event.eventId} == null ? @{/evento} : @{__${event.eventId}__}" >
-
+                        <form th:if="${event}" class="ui form" method="POST" th:object="${event}" th:action="${event.eventId} == null ? @{/evento} : @{__${event.eventId}__}" >
 
 
-                    <!--<form th:if="${event}" class="ui form" method="POST" th:object="${event}" th:action="@{__${event.eventId}__}">-->
-                    <!--<form th:if="${user}" class="ui form" method="POST" th:object="${user}" th:action="@{/usuario/${user.id}">-->
-                    <div class="form-group">
-                        <label>Nome</label>
-                        <input th:field="*{eventName}"type="text" class="form-control" placeholder="Nome" required="required">
+
+                            <!--<form th:if="${event}" class="ui form" method="POST" th:object="${event}" th:action="@{__${event.eventId}__}">-->
+                            <!--<form th:if="${user}" class="ui form" method="POST" th:object="${user}" th:action="@{/usuario/${user.id}">-->
+                            <div class="form-group">
+                                <label>Nome</label>
+                                <input th:field="*{eventName}"type="text" class="form-control" placeholder="Nome" required="required">
+                            </div>
+                            <div class="form-group">
+                                <label>Data</label>
+                                <input class="form-control" type="date" th:value="*{eventDate}" th:field="*{eventDate}" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Data abertura inscrição</label>
+                                <input class="form-control" type="date" th:value="*{registrationStartDate}" th:field="*{registrationStartDate}" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Data encerramento inscrição</label>
+                                <input class="form-control" type="date" th:value="*{registrationEndDate}" th:field="*{registrationEndDate}" />
+                            </div>
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                            <a th:if="${event.eventId}" th:href="@{/evento/__${event.eventId}__/delete}">
+                                <button type="button" class="btn btn-danger">Excluir</button>
+                            </a>
+                        </form>
+                        <div th:if="${error}" class="alert alert-danger">
+
+                            <a href="#" class="close" data-dismiss="alert"
+                               aria-label="close">×</a>
+                            <strong>Erro:</strong> <span th:text="${error}" />
+                        </div>
+                        <!-- Trigger the modal with a button -->
                     </div>
-                    <div class="form-group">
-                        <label>Data</label>
-                        <input class="form-control" type="date" th:value="*{eventDate}" th:field="*{eventDate}" />
-                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>Submissões de Artigos</h4>
+                            </div>
+                            <div class="col-md-6">
+                                <a th:if="${event.eventId}" th:href="@{/submissoes/evento/__${event.eventId}__}">
+                                    <button type="button" class="btn btn-info">Submeter artigos</button>
+                                </a>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="table-responsive">
+                            <table class="table" id="events-table">
+                                <thead>
+                                    <tr>
+                                        <th>Editar</th>
+                                        <th>Title</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="article : ${event.articles}">
+                                        <td>
+                                            <a th:href="@{/submissoes/__${article.articleId}__}">
+                                                Editar
+                                            </a>
+                                        </td>
+                                        <td th:text="${article.title}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
-                    <div class="form-group">
-                        <label>Data abertura inscrição</label>
-                        <input class="form-control" type="date" th:value="*{registrationStartDate}" th:field="*{registrationStartDate}" />
                     </div>
-
-                    <div class="form-group">
-                        <label>Data encerramento inscrição</label>
-                        <input class="form-control" type="date" th:value="*{registrationEndDate}" th:field="*{registrationEndDate}" />
-                    </div>
-                    <button type="submit" class="btn btn-primary">Salvar</button>
-                    <a th:href="@{/evento/__${event.eventId}__/delete}">
-                        <button type="button" class="btn btn-danger">Excluir</button>
-                    </a>
-                </form>
-                <div th:if="${error}" class="alert alert-danger">
-
-                    <a href="#" class="close" data-dismiss="alert"
-                       aria-label="close">×</a>
-                    <strong>Erro:</strong> <span th:text="${error}" />
                 </div>
-                <!-- Trigger the modal with a button -->
             </div>
         </main>
 

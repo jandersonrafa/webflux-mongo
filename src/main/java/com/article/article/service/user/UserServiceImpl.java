@@ -51,12 +51,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 //    private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Override
 	public Mono<UserDetailDto> findById(String userId) {
-		final String loggedUserId = this.getLoggedUser().getId();
-		if (loggedUserId.equals(userId)) {
-			return userRepository.findById(loggedUserId).map(entity -> modelMapper.map(entity, UserDetailDto.class));
-		} else {
-			throw new UnauthorizedException("Usuário não permitido");
-		}
+		return userRepository.findById(userId).map(entity -> modelMapper.map(entity, UserDetailDto.class));
 	}
 
 	@Override
@@ -65,10 +60,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		final Optional<User> optUser = userRepository.findById(userId).blockOptional();
 		if (optUser.isPresent()) {
 			final User user = optUser.get();
-			user.setEmail(dto.getEmail());
-			user.setName(dto.getName());
-			user.setUsername(dto.getUsername());
-			return userRepository.save(user).map(entity -> modelMapper.map(entity, UserDetailDto.class));
+			if (user.getId().equals(getLoggedUser().getId())) {
+
+				user.setEmail(dto.getEmail());
+				user.setName(dto.getName());
+				user.setUsername(dto.getUsername());
+				user.setPassword(dto.getPassword());
+				return userRepository.save(user).map(entity -> modelMapper.map(entity, UserDetailDto.class));
+			} else {
+				throw new UnauthorizedException("Usuário não permitido");
+			}
 		} else {
 			throw new NotFoundException("Usuário não encontrado");
 		}
@@ -87,10 +88,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 		if (dto.getPassword().length() == 0) {
 			throw new ValidateException("Uma senha deve ser informada.");
-		}
-
-		if (!dto.getPassword().equals(dto.getPasswordConfirm())) {
-			throw new ValidateException("Senha e confirmação de senha não são iguais.");
 		}
 
 		return userRepository.save(user).map(entity -> modelMapper.map(entity, UserDetailDto.class));

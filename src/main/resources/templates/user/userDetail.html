@@ -16,7 +16,7 @@
             </section>
             <div class="container">
 
-                <form th:if="${user}" class="ui form" method="POST" th:object="${user}" th:action="${user.id} == null ? @{/usuario} : @{__${user.id}__}" >
+                <form th:if="${user}" class="ui form" method="POST" th:object="${user}" th:action="${user.id} == null ? @{/usuario/cadastro} : @{__${user.id}__}" >
                     <!--<form th:if="${user}" class="ui form" method="POST" th:object="${user}" th:action="@{/usuario/${user.id}">-->
                     <div class="form-group">
                         <label>Nome</label>

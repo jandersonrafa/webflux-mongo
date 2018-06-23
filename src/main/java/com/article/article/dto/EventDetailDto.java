@@ -1,6 +1,10 @@
 package com.article.article.dto;
 
 import java.time.LocalDate;
+import java.util.List;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -23,15 +27,21 @@ public class EventDetailDto {
 
 	private String eventId;
 
+	@NotBlank(message = "Nome evento é obrigatório")
 	private String eventName;
 
+	@NotNull(message = "Data evento é obrigatório")
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate eventDate;
 
+	@NotNull(message = "Data abertura inscrição")
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate registrationStartDate;
 
+	@NotNull(message = "Data encerramento inscrição")
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate registrationEndDate;
+
+	private List<EventArticleDetailDto> articles;
 
 }

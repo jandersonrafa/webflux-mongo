@@ -21,4 +21,12 @@ public class EventListingDto {
 
 	private String eventName;
 
+	private String dsEventDate;
+
+	private String dsRegistrationStartDate;
+
+	private String dsRegistrationEndDate;
+
+	private String userCreated;
+
 }

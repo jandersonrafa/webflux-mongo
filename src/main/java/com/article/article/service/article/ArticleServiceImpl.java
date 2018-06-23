@@ -1,6 +1,7 @@
 package com.article.article.service.article;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
@@ -13,6 +14,7 @@ import com.article.article.exception.NotFoundException;
 import com.article.article.model.Article;
 import com.article.article.model.Event;
 import com.article.article.repository.ArticleRepository;
+import com.article.article.repository.ArticleSimpleRepository;
 import com.article.article.service.event.EventService;
 import com.article.article.service.user.UserService;
 import com.article.article.service.validator.ValidatorService;
@@ -29,6 +31,9 @@ public class ArticleServiceImpl implements ArticleService {
 
 	@Autowired
 	private ArticleRepository articleRepository;
+
+	@Autowired
+	private ArticleSimpleRepository articleSimpleRepository;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -73,6 +78,11 @@ public class ArticleServiceImpl implements ArticleService {
 			dto.setEvent(entity.getEvent());
 			return dto;
 		});
+	}
+
+	@Override
+	public List<Article> findByEventId(String eventId) {
+		return articleSimpleRepository.findByEvent_EventId(eventId);
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package com.article.article.controller;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import com.article.article.dto.EventDetailDto;
 import com.article.article.dto.output.EventListingDto;
 import com.article.article.exception.AbstractBusinessException;
 import com.article.article.service.event.EventService;
+import com.google.common.base.Strings;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -42,14 +44,14 @@ public class EventController {
 
 	@GetMapping("/{id}")
 	@ApiOperation(value = "Exibe detalhamento de evento")
-	public Mono<ModelAndView> pageDetail(@PathVariable("id") String eventId) {
-		return eventService.findById(eventId).map(event -> new ModelAndView("event/eventDetail", "event", event));
+	public Mono<ModelAndView> pageDetail(@PathVariable("id") String eventId, @ModelAttribute("event") EventDetailDto dto) {
+		return Strings.isNullOrEmpty(dto.getEventId()) ? eventService.findById(eventId).map(event -> new ModelAndView("event/eventDetail", "event", event)) : Mono.just(new ModelAndView("event/eventDetail", "event", dto));
 	}
 
 	@GetMapping("/cadastro")
 	@ApiOperation(value = "Exibe cadastro de evento")
-	public ModelAndView pageRegister() {
-		return new ModelAndView("event/eventDetail", "event", new EventDetailDto());
+	public ModelAndView pageRegister(@ModelAttribute("event") EventDetailDto dto) {
+		return new ModelAndView("event/eventDetail", "event", dto);
 	}
 
 	@GetMapping("/{id}/delete")
@@ -64,6 +66,7 @@ public class EventController {
 	public String update(@PathVariable("id") String eventId, EventDetailDto dto, RedirectAttributes redirectAttrs) {
 		try {
 			// TODO redirecionar para evento quando sucesso
+			dto.setEventId(eventId);
 			redirectAttrs.addFlashAttribute("event", eventService.update(eventId, dto).block());
 			return "redirect:/evento/" + eventId;
 		} catch (Exception e) {
@@ -84,7 +87,7 @@ public class EventController {
 		} catch (Exception e) {
 			redirectAttrs.addFlashAttribute("error", e instanceof AbstractBusinessException ? e.getMessage() : "Erro ao tentar salvar");
 			redirectAttrs.addFlashAttribute("event", dto);
-			return "redirect:/evento";
+			return "redirect:/evento/cadastro";
 		}
 	}
 

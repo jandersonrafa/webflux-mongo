@@ -24,7 +24,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //	};
 	private String[] publicUrls = new String[]{
 		"/usuario/cadastro",
-		"/swagger-ui.html",
+		"/webjars/**",
 		"/login",
 		"/logout"};
 //
