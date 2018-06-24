@@ -3,8 +3,10 @@ package com.article.article.dto;
 import java.time.LocalDate;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.article.article.model.Event;
 
@@ -35,6 +37,9 @@ public class SubmissionDetailDto {
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate submissionDate;
+
+	@NotNull(message = "Arquivo é obrigatório")
+	private MultipartFile file;
 
 	private String fileName;
 

@@ -52,7 +52,7 @@ public class EventServiceImpl implements EventService {
 	public Flux<EventListingDto> findAll() {
 		// TODO filtrar por eventos do usuario
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-		return eventRepository.findByUser_Id(userService.getLoggedUser().getId()).map(entity -> {
+		return eventRepository.findAll().map(entity -> {
 
 			final EventListingDto dto = modelMapper.map(entity, EventListingDto.class);
 			dto.setDsEventDate(entity.getEventDate().format(formatter));
@@ -77,10 +77,10 @@ public class EventServiceImpl implements EventService {
 	public void delete(String eventId) {
 		final Optional<Event> optional = eventRepository.findById(eventId).blockOptional();
 		final String loggedUserId = userService.getLoggedUser().getId();
-		if (optional.isPresent() || !optional.get().getUser().getId().equals(loggedUserId)) {
+		if (optional.isPresent() && optional.get().getUser().getId().equals(loggedUserId)) {
 			eventRepository.delete(optional.get()).block();
 		} else {
-			throw new NotFoundException("Evento não encontrado");
+			throw new NotFoundException("Evento não encontrado ou não permitido");
 		}
 	}
 
@@ -90,7 +90,7 @@ public class EventServiceImpl implements EventService {
 		validate(dto);
 		final Optional<Event> optional = eventRepository.findById(eventId).blockOptional();
 		final String loggedUserId = userService.getLoggedUser().getId();
-		if (optional.isPresent() || !optional.get().getUser().getId().equals(loggedUserId)) {
+		if (optional.isPresent() && optional.get().getUser().getId().equals(loggedUserId)) {
 			final Event model = optional.get();
 			model.setEventDate(dto.getEventDate());
 			model.setEventName(dto.getEventName());
@@ -99,7 +99,7 @@ public class EventServiceImpl implements EventService {
 			model.setUser(userService.getLoggedUser());
 			return eventRepository.save(model).map(entity -> modelMapper.map(entity, EventDetailDto.class));
 		} else {
-			throw new NotFoundException("Evento não encontrado");
+			throw new NotFoundException("Evento não encontrado ou não permitido");
 		}
 	}
 

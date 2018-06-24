@@ -15,10 +15,10 @@
             </section>
             <div class="container">
 
-                <a th:if="${submission.articleId}" >
-                    <button type="submit" class="btn btn-primary">// TODO SUBMISSAO EVENTO</button>
+                <a  th:href="@{/evento/__${submission.event.eventId}__}">
+                    <button type="submit" class="btn btn-primary">Detalhar Evento</button>
                 </a>
-                <form th:if="${submission}" class="ui form" method="POST" th:object="${submission}" th:action="${submission.articleId} == null ? @{/submissoes/evento/__${submission.event.eventId}__} : @{__${submission.articleId}__}" >
+                <form th:if="${submission}" class="ui form" method="POST" th:object="${submission}" th:action="${submission.articleId} == null ? @{/submissoes/evento/__${submission.event.eventId}__} : @{__${submission.articleId}__}" enctype="multipart/form-data">
 
 
 
@@ -32,8 +32,16 @@
                         <label>Resumo</label>
                         <input th:field="*{resume}"type="text" class="form-control" placeholder="Resumo" required="required">
                     </div>
-
                     <div class="form-group">
+                        <label>Novo Arquivo</label>
+                        <input type="file" name="file" class="form-control"  id="file" />
+
+                        <a th:if="${submission.fileName}" th:href="@{|/submissoes/download?fileName=${submission.fileName}|}"><span th:text="${submission.fileName}"></span></a>
+
+                        <!--<input th:field="*{resume}"type="text" class="form-control" placeholder="Resumo" required="required">-->
+                    </div>
+
+                    <div th:if="${submission.articleId}" class="form-group">
                         <label>Data Submissao</label>
                         <input disabled class="form-control" type="date" th:value="*{submissionDate}" th:field="*{submissionDate}" />
                     </div>
@@ -48,7 +56,6 @@
                        aria-label="close">×</a>
                     <strong>Erro:</strong> <span th:text="${error}" />
                 </div>
-                <!-- Trigger the modal with a button -->
             </div>
         </main>
 

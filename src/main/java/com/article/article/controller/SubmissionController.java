@@ -1,6 +1,15 @@
 package com.article.article.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,6 +25,7 @@ import com.article.article.dto.output.SubmissionListingDto;
 import com.article.article.exception.AbstractBusinessException;
 import com.article.article.model.Event;
 import com.article.article.service.article.ArticleService;
+import com.article.article.service.file.FileService;
 import com.google.common.base.Strings;
 
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +39,7 @@ import reactor.core.publisher.Mono;
 public class SubmissionController {
 
 	private final ArticleService articleService;
+	private final FileService fileService;
 
 	@GetMapping
 	@ApiOperation(value = "Exibe pagina com listagem de eventos que usuario submeteu artigos")
@@ -58,7 +69,7 @@ public class SubmissionController {
 
 	@PostMapping("{id}")
 	@ApiOperation(value = "Update de artigo submetido")
-	public String update(@PathVariable("id") String submissionId, SubmissionDetailDto dto, RedirectAttributes redirectAttrs) {
+	public String update(@PathVariable("id") String submissionId, @ModelAttribute SubmissionDetailDto dto, RedirectAttributes redirectAttrs) {
 		try {
 			dto.setArticleId(submissionId);
 			// TODO redirecionar para evento quando sucesso
@@ -73,7 +84,7 @@ public class SubmissionController {
 
 	@PostMapping("/evento/{idEvento}")
 	@ApiOperation(value = "Cria nova Submissao de artigo")
-	public String save(@PathVariable("idEvento") String idEvento, SubmissionDetailDto dto, RedirectAttributes redirectAttrs) {
+	public String save(@PathVariable("idEvento") String idEvento, @ModelAttribute SubmissionDetailDto dto, RedirectAttributes redirectAttrs) {
 		try {
 			// TODO redirecionar para evento quando sucesso
 			SubmissionDetailDto dtoSave = articleService.create(dto, idEvento).block();
@@ -92,6 +103,21 @@ public class SubmissionController {
 		final SubmissionDetailDto dto = new SubmissionDetailDto();
 		dto.setEvent(Event.builder().eventId(idEvento).build());
 		submissionDetailDto.setEvent(Event.builder().eventId(idEvento).build());
-		return Strings.isNullOrEmpty(submissionDetailDto.getArticleId()) ? new ModelAndView("submission/submissionDetail", "submission", dto) : new ModelAndView("submission/submissionDetail", "submission", submissionDetailDto);
+		return Strings.isNullOrEmpty(submissionDetailDto.getTitle()) ? new ModelAndView("submission/submissionDetail", "submission", dto) : new ModelAndView("submission/submissionDetail", "submission", submissionDetailDto);
+	}
+
+	@GetMapping("/download")
+	public ResponseEntity<InputStreamResource> downloadFile(@Param(value = "fileName") String fileName) throws FileNotFoundException {
+
+		File file = fileService.load(fileName);
+		HttpHeaders header = new HttpHeaders();
+		header.setContentType(MediaType.APPLICATION_PDF);
+		header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+		header.setContentLength(file.length());
+
+		InputStreamResource isr = new InputStreamResource(new FileInputStream(file));
+
+		return new ResponseEntity<>(isr, header, HttpStatus.OK);
+
 	}
 }
