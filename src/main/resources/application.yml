@@ -13,6 +13,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://admin123:admin123@ds253840.mlab.com:53840/article
+#      uri: mongodb://localhost:27017/article
 
 info:
   app:

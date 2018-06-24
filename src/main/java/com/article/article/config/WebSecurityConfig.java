@@ -16,54 +16,46 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-//	private String[] publicUrls = new String[] {
-//		"/usuario/novo",
-//		"/css/**",
-//		"/js/**",
-//		"/images/**"
-//	};
-	private String[] publicUrls = new String[]{
-		"/usuario/cadastro",
-		"/webjars/**",
-		"/login",
-		"/logout"};
-//
-//	private String[] adminUrls = new String[] {
-//		"/admin/**"
-//	};
-	@Qualifier("userServiceImpl")
-	@Autowired
-	private UserDetailsService userDetailsService;
+    private String[] publicUrls = new String[]{
+        "/usuario/cadastro",
+        "/webjars/**",
+        "/login",
+        "/logout"};
 
-	@Bean
-	public BCryptPasswordEncoder bCryptPasswordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+    @Qualifier("userServiceImpl")
+    @Autowired
+    private UserDetailsService userDetailsService;
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable()
-				.authorizeRequests()
-				.antMatchers(publicUrls).permitAll()
-				.anyRequest().authenticated()
-				.and()
-				.formLogin()
-				.permitAll()
-				.and()
-				.logout()
-				.permitAll()
-				.and()
-				.exceptionHandling()
-				.accessDeniedPage("/denied");
-	}
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
-	}
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+                .authorizeRequests()
+                .antMatchers(publicUrls).permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .loginPage("/login")
+                .permitAll()
+                .and()
+                .logout()
+                .permitAll()
+                .and()
+                .exceptionHandling()
+                .accessDeniedPage("/denied");
+    }
 
-	@Bean
-	public AuthenticationManager customAuthenticationManager() throws Exception {
-		return authenticationManager();
-	}
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+    }
+
+    @Bean
+    public AuthenticationManager customAuthenticationManager() throws Exception {
+        return authenticationManager();
+    }
 }
