@@ -32,84 +32,78 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/usuario")
 public class UserController {
 
-	private final UserService userService;
-	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserService userService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	@GetMapping
-	@ApiOperation(value = "Página de Usuários")
-	public ModelAndView pageUser() {
-		return new ModelAndView("user/userList");
-	}
+    @GetMapping
+    @ApiOperation(value = "Página de Usuários")
+    public ModelAndView pageUser() {
+        return new ModelAndView("user/userList");
+    }
 
-	@ResponseBody
-	@GetMapping(value = "/todos", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-	@ApiOperation(value = "Listagem de Usuários")
-	public Flux<UserListingDto> listUser() {
-		return userService.findAll();
-	}
+    @ResponseBody
+    @GetMapping(value = "/todos", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @ApiOperation(value = "Listagem de Usuários")
+    public Flux<UserListingDto> listUser() {
+        return userService.findAll();
+    }
 
-	@GetMapping("/{userId}")
-	@ApiOperation(value = "Exibe pagina detalhes do usuário")
-	public Mono<ModelAndView> exibeUsuario(@PathVariable("userId") String userId, @ModelAttribute("user") UserDetailDto dto) {
-		return Strings.isNullOrEmpty(dto.getId()) ? userService.findById(userId).map(user -> new ModelAndView("user/userDetail", "user", user)) : Mono.just(new ModelAndView("user/userDetail", "user", dto));
-	}
+    @GetMapping("/{userId}")
+    @ApiOperation(value = "Exibe pagina detalhes do usuário")
+    public Mono<ModelAndView> exibeUsuario(@PathVariable("userId") String userId, @ModelAttribute("user") UserDetailDto dto) {
+        return Strings.isNullOrEmpty(dto.getId()) ? userService.findById(userId).map(user -> new ModelAndView("user/userDetail", "user", user)) : Mono.just(new ModelAndView("user/userDetail", "user", dto));
+    }
 
-	@PostMapping("/{id}")
-	@ApiOperation(value = "Alteração de dados de usuario")
-	public String update(@PathVariable("id") String userId, UserDetailDto dto, RedirectAttributes redirectAttrs) throws UserException {
-		try {
-			// TODO redirecionar para evento quando sucesso
-			dto.setId(userId);
-			handlePassword(dto);
-			redirectAttrs.addFlashAttribute("user", userService.update(userId, dto).block());
-			return "redirect:/evento";
-		} catch (Exception e) {
-			redirectAttrs.addFlashAttribute("error", e instanceof AbstractBusinessException ? e.getMessage() : "Erro ao tentar salvar");
-			redirectAttrs.addFlashAttribute("user", dto);
-			return "redirect:/usuario/" + userId;
-		}
-	}
+    @PostMapping("/{id}")
+    @ApiOperation(value = "Alteração de dados de usuario")
+    public String update(@PathVariable("id") String userId, UserDetailDto dto, RedirectAttributes redirectAttrs) throws UserException {
+        try {
+            // TODO redirecionar para evento quando sucesso
+            dto.setId(userId);
+            handlePassword(dto);
+            redirectAttrs.addFlashAttribute("user", userService.update(userId, dto).block());
+            return "redirect:/evento";
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("error", e instanceof AbstractBusinessException ? e.getMessage() : "Erro ao tentar salvar");
+            redirectAttrs.addFlashAttribute("user", dto);
+            return "redirect:/usuario/" + userId;
+        }
+    }
 
-	@GetMapping("/cadastro")
-	@ApiOperation(value = "Exibe pagina cadastro de usuário")
-	public ModelAndView pageRegister(@ModelAttribute("user") UserDetailDto dto) {
-		return new ModelAndView("user/userDetail", "user", dto);
-	}
+    @GetMapping("/cadastro")
+    @ApiOperation(value = "Exibe pagina cadastro de usuário")
+    public ModelAndView pageRegister(@ModelAttribute("user") UserDetailDto dto) {
+        return new ModelAndView("user/userDetail", "user", dto);
+    }
 
-	@PostMapping("/cadastro")
-	@ApiOperation(value = "Salvar usuario")
-	public String save(UserDetailDto dto, RedirectAttributes redirectAttrs) throws UserException {
-		try {
-			handlePassword(dto);
-			redirectAttrs.addFlashAttribute("user", userService.save(dto, redirectAttrs).block());
-			return "redirect:/";
-		} catch (Exception e) {
-			redirectAttrs.addFlashAttribute("error", e instanceof AbstractBusinessException ? e.getMessage() : "Erro ao tentar salvar");
-			redirectAttrs.addFlashAttribute("user", dto);
-			return "redirect:/usuario/cadastro";
-		}
-	}
+    @PostMapping("/cadastro")
+    @ApiOperation(value = "Salvar usuario")
+    public String save(UserDetailDto dto, RedirectAttributes redirectAttrs) throws UserException {
+        try {
+            handlePassword(dto);
+            redirectAttrs.addFlashAttribute("user", userService.save(dto, redirectAttrs).block());
+            return "redirect:/";
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("error", e instanceof AbstractBusinessException ? e.getMessage() : "Erro ao tentar salvar");
+            redirectAttrs.addFlashAttribute("user", dto);
+            return "redirect:/usuario/cadastro";
+        }
+    }
 
-//	@DeleteMapping("/exemplo/{userId}/delete")
-//	@ApiOperation(value = "Exclusão de usuário")
-//	@ResponseBody
-//	public String delete(@PathVariable("userId") Long userId) {
-//		try {
-//			userService.delete(userId);
-//		} catch (UserException e) {
-//			return e.getMessage();
-//		}
-//		return "OK";
-//	}
-	private void handlePassword(UserDetailDto dto) throws ValidateException {
-		if (!dto.getPassword().equals(dto.getPasswordConfirm())) {
-			throw new ValidateException("Senha e confirmação de senha não são iguais.");
-		}
-		Optional.ofNullable(dto.getPassword()).ifPresent(password -> {
-			dto.setPassword(bCryptPasswordEncoder.encode(password));
-		});
-		Optional.ofNullable(dto.getPasswordConfirm()).ifPresent(password -> {
-			dto.setPasswordConfirm(bCryptPasswordEncoder.encode(password));
-		});
-	}
+    @GetMapping("/cadastro/logado")
+    public String alterarPerfil() throws UserException {
+        return "redirect:/usuario/" + userService.getLoggedUser().getId();
+    }
+
+    private void handlePassword(UserDetailDto dto) throws ValidateException {
+        if (!dto.getPassword().equals(dto.getPasswordConfirm())) {
+            throw new ValidateException("Senha e confirmação de senha não são iguais.");
+        }
+        Optional.ofNullable(dto.getPassword()).ifPresent(password -> {
+            dto.setPassword(bCryptPasswordEncoder.encode(password));
+        });
+        Optional.ofNullable(dto.getPasswordConfirm()).ifPresent(password -> {
+            dto.setPasswordConfirm(bCryptPasswordEncoder.encode(password));
+        });
+    }
 }

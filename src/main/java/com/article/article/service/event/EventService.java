@@ -13,16 +13,18 @@ import reactor.core.publisher.Mono;
  */
 public interface EventService {
 
-	public Flux<EventListingDto> findAll();
+    public Flux<EventListingDto> findAll();
 
-	public Mono<EventDetailDto> findById(String eventId);
+    public Flux<EventListingDto> findAll(String usuarioLogadoId);
 
-	public Mono<EventDetailDto> update(String eventId, EventDetailDto dto);
+    public Mono<EventDetailDto> findById(String eventId);
 
-	public Mono<EventDetailDto> create(EventDetailDto dto);
+    public Mono<EventDetailDto> update(String eventId, EventDetailDto dto);
 
-	public void delete(String eventId);
+    public Mono<EventDetailDto> create(EventDetailDto dto);
 
-	public Event findModelById(String idEvento);
+    public void delete(String eventId);
+
+    public Event findModelById(String idEvento);
 
 }
