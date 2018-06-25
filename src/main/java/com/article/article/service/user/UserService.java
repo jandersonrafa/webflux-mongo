@@ -25,5 +25,7 @@ public interface UserService {
     public User getLoggedUser();
 
     public Flux<UserListingDto> findAll();
+    
+    public boolean isLogged();
 
 }

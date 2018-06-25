@@ -72,8 +72,11 @@ public class UserController {
 
     @GetMapping("/cadastro")
     @ApiOperation(value = "Exibe pagina cadastro de usuário")
-    public ModelAndView pageRegister(@ModelAttribute("user") UserDetailDto dto) {
-        return new ModelAndView("user/userDetail", "user", dto);
+    public ModelAndView pageRegister() {
+        if (userService.isLogged()) {
+            return new ModelAndView("redirect");
+        }
+        return new ModelAndView("user/userDetail", "user", new UserDetailDto());
     }
 
     @PostMapping("/cadastro")

@@ -38,86 +38,91 @@ import reactor.core.publisher.Mono;
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
 
-	@Autowired
-	private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-	@Autowired
-	private ModelMapper modelMapper;
+    @Autowired
+    private ModelMapper modelMapper;
 
-	@Autowired
-	private ValidatorService validatorService;
+    @Autowired
+    private ValidatorService validatorService;
 
 //    @Autowired
 //    private BCryptPasswordEncoder bCryptPasswordEncoder;
-	@Override
-	public Mono<UserDetailDto> findById(String userId) {
-		return userRepository.findById(userId).map(entity -> modelMapper.map(entity, UserDetailDto.class));
-	}
+    @Override
+    public Mono<UserDetailDto> findById(String userId) {
+        return userRepository.findById(userId).map(entity -> modelMapper.map(entity, UserDetailDto.class));
+    }
 
-	@Override
-	public Mono<UserDetailDto> update(String userId, @Valid UserDetailDto dto) {
-		validatorService.validate(dto);
-		final Optional<User> optUser = userRepository.findById(userId).blockOptional();
-		if (optUser.isPresent()) {
-			final User user = optUser.get();
-			if (user.getId().equals(getLoggedUser().getId())) {
+    @Override
+    public Mono<UserDetailDto> update(String userId, @Valid UserDetailDto dto) {
+        validatorService.validate(dto);
+        final Optional<User> optUser = userRepository.findById(userId).blockOptional();
+        if (optUser.isPresent()) {
+            final User user = optUser.get();
+            if (user.getId().equals(getLoggedUser().getId())) {
 
-				user.setEmail(dto.getEmail());
-				user.setName(dto.getName());
-				user.setUsername(dto.getUsername());
-				user.setPassword(dto.getPassword());
-				return userRepository.save(user).map(entity -> modelMapper.map(entity, UserDetailDto.class));
-			} else {
-				throw new UnauthorizedException("Usuário não permitido");
-			}
-		} else {
-			throw new NotFoundException("Usuário não encontrado");
-		}
-	}
+                user.setEmail(dto.getEmail());
+                user.setName(dto.getName());
+                user.setUsername(dto.getUsername());
+                user.setPassword(dto.getPassword());
+                return userRepository.save(user).map(entity -> modelMapper.map(entity, UserDetailDto.class));
+            } else {
+                throw new UnauthorizedException("Usuário não permitido");
+            }
+        } else {
+            throw new NotFoundException("Usuário não encontrado");
+        }
+    }
 
-	@Override
-	public Mono<UserDetailDto> save(@Valid UserDetailDto dto, RedirectAttributes redirectAttrs) {
-		validatorService.validate(dto);
-		User user = modelMapper.map(dto, User.class);
+    @Override
+    public Mono<UserDetailDto> save(@Valid UserDetailDto dto, RedirectAttributes redirectAttrs) {
+        validatorService.validate(dto);
+        User user = modelMapper.map(dto, User.class);
 
-		Optional<User> findByUsername = userRepository.findByUsername(dto.getUsername()).blockOptional();
+        Optional<User> findByUsername = userRepository.findByUsername(dto.getUsername()).blockOptional();
 
-		if (findByUsername.isPresent()) {
-			throw new ValidateException("Um usuário com este nome de usuário já está cadastrado.");
-		}
+        if (findByUsername.isPresent()) {
+            throw new ValidateException("Um usuário com este nome de usuário já está cadastrado.");
+        }
 
-		if (dto.getPassword().length() == 0) {
-			throw new ValidateException("Uma senha deve ser informada.");
-		}
+        if (dto.getPassword().length() == 0) {
+            throw new ValidateException("Uma senha deve ser informada.");
+        }
 
-		return userRepository.save(user).map(entity -> modelMapper.map(entity, UserDetailDto.class));
-	}
+        return userRepository.save(user).map(entity -> modelMapper.map(entity, UserDetailDto.class));
+    }
 
-	@Override
-	public User getLoggedUser() {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		return ((LoggedUser) auth.getPrincipal()).getUser();
-	}
+    @Override
+    public User getLoggedUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return ((LoggedUser) auth.getPrincipal()).getUser();
+    }
 
-	@Override
-	public Flux<UserListingDto> findAll() {
-		return userRepository.findAll().map(entity -> {
-			return modelMapper.map(entity, UserListingDto.class);
-		});
-	}
+    @Override
+    public Flux<UserListingDto> findAll() {
+        return userRepository.findAll().map(entity -> {
+            return modelMapper.map(entity, UserListingDto.class);
+        });
+    }
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-		User user = userRepository.findByUsername(username).block();
+        User user = userRepository.findByUsername(username).block();
 
-		Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
 //		for (Role role : user.getRoles()) {
 //			grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
 //		}
-		grantedAuthorities.add(new SimpleGrantedAuthority("PUBLIC"));
-		return new LoggedUser(user);
+        grantedAuthorities.add(new SimpleGrantedAuthority("PUBLIC"));
+        return new LoggedUser(user);
 //		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), grantedAuthorities);
-	}
+    }
+
+    @Override
+    public boolean isLogged() {
+        return !SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals("anonymousUser");
+    }
 
 }
